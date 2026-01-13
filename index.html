@@ -86,34 +86,6 @@
     </div>
 
     <script>
-        let wallet = 1000;
-        let bet = 0;
-        let pickColor = null;
-        let mode = 30;
-        let timer = 30;
-        let gameId = "room30";
-
-        setInterval(() => { timerTick() }, 1000);
-
-        function setMode(sec, btn) {
-            mode = sec;
-            timer = sec;
-            gameId = "room" + sec;
-            document.querySelectorAll(".smallBtn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        }
-
-        function timerTick() {
-            document.getElementById("timer").innerText = timer;
-            if (timer <= 0) {
-                timer = mode;
-                checkResult();
-            }
-            timer--;
-        }
-
-        function setBet(b) { bet = b; }
-
-        function pick(col) {
-            pickColor = col;
-            document.getElementById("pick
+        <script src="https://www.gstatic.com/firebasejs/..."></script>
+<script src="config.js"></script>
+<script src="wallet.js"></script>
