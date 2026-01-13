@@ -1,58 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAJA GAME - Demo</title>
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0d1b2a;
-  color:#fff;
-  text-align:center;
-}
-button{
-  padding:15px;
-  margin:5px;
-  border:none;
-  border-radius:8px;
-  font-size:18px;
-  font-weight:bold;
-  color:#fff;
-}
-.red{background:#ef4444}
-.green{background:#22c55e}
-.violet{background:#8b5cf6}
-.card{
-  background:#1b263b;
-  padding:20px;
-  margin:20px;
-  border-radius:10px;
-  box-shadow:0 0 10px rgba(0,0,0,.4);
-}
-h1{margin-top:25px;color:#38bdf8}
-</style>
+  <meta charset="UTF-8">
+  <title>RAJA GAME Demo</title>
+  <style>
+    body {background:#101820;color:white;text-align:center;font-family:Arial;margin:0}
+    h1 {color:#00eaff;margin:20px 0}
+    .card {background:#1a2a3a;border-radius:10px;margin:20px;padding:20px}
+    button {padding:15px;margin:5px;border:none;border-radius:8px;font-size:18px;color:white}
+    .red {background:#ff1e45}
+    .green {background:#00c853}
+    .violet {background:#7c4dff}
+  </style>
 </head>
 <body>
-<h1>RAJA GAME DEMO</h1>
-<div class="card">
-<h3>Next Round in <span id="timer">30</span></h3>
-<button class="red" onclick="pick('RED')">RED</button>
-<button class="green" onclick="pick('GREEN')">GREEN</button>
-<button class="violet" onclick="pick('VIOLET')">VIOLET</button>
-<p>Picked: <b id="pick">None</b></p>
-<p>Result: <b id="result">--</b></p>
-<p>Balance: <b id="bal">1000</b></p>
-</div>
+  <h1>RAJA GAME DEMO</h1>
+  <div class="card">
+    <h2>Next Round: <span id="t">30</span>s</h2>
+    <button class="red" onclick="pick('RED')">RED</button>
+    <button class="green" onclick="pick('GREEN')">GREEN</button>
+    <button class="violet" onclick="pick('VIOLET')">VIOLET</button>
+    <p>Pick: <b id="pick">None</b></p>
+    <p>Result: <b id="res">--</b></p>
+    <p>Coins: <b id="bal">1000</b></p>
+  </div>
 
 <script>
-let t=30,b=1000,p=null;
+let t=30, pickCol=null, bal=1000;
+
 setInterval(()=>{
-  if(t>0){
-    t--;
-    timer.innerText=t;
-  }else{
-    let r=['RED','GREEN','VIOLET'][Math.floor(Math.random()*3)];
-    result.innerText=r;
-    if(p===r){
+  if(t>0){ t--; document.getElementById('t').innerText=t; }
+  else{
+    const r=["RED","GREEN","VIOLET"][Math.floor(Math.random()*3)];
+    document.getElementById('res').innerText=r;
+    if(pickCol===r) bal+=100;
+    else if(pickCol) bal-=100;
+    document.getElementById('bal').innerText=bal;
+    pickCol=null;
+    document.getElementById('pick').innerText="None";
+    t=30;
+  }
+},1000);
+
+function pick(c){
+  pickCol=c;
+  document.getElementById('pick').innerText=c;
+}
+</script>
+</body>
+</html>
