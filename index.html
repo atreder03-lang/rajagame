@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAJA GAME - Demo</title>
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff;text-align:center}
+button{padding:15px;margin:5px;border:none;border-radius:8px;font-size:18px;font-weight:bold;color:#fff}
+.red{background:#ef4444}
+.green{background:#22c55e}
+.violet{background:#8b5cf6}
+.card{background:#111;padding:20px;margin:20px;border-radius:10px}
+</style>
+</head>
+<body>
+<h1>RAJA GAME DEMO</h1>
+<div class="card">
+<h3>Next Round in <span id="timer">30</span></h3>
+<button class="red" onclick="pick('RED')">RED</button>
+<button class="green" onclick="pick('GREEN')">GREEN</button>
+<button class="violet" onclick="pick('VIOLET')">VIOLET</button>
+<p>Picked: <b id="pick">None</b></p>
+<p>Result: <b id="result">--</b></p>
+<p>Balance: <b id="bal">1000</b></p>
+</div>
+
+<script>
+let t=30,b=1000,p=null;
+setInterval(()=>{if(t>0){t--;timer.innerText=t;}else{
+let r=['RED','GREEN','VIOLET'][Math.floor(Math.random()*3)];
+result.innerText=r;
+if(p===r){b+=100;}else if(p){b-=100;}
+bal.innerText=b;p=null;pick.innerText='None';t=30;}
+},1000);
+function pick(c){p=c;pick.innerText=c;}
+</script>
+</body>
+</html>
