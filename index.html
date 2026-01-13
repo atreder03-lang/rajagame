@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAJA GAME DEMO</title>
+    
     <!-- Firebase और Config स्क्रिप्ट्स -->
-    <script src="config.js" type="module"></script>
-    <script src="wallet.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+    <script src="config.js" type="module"></script>
+    <script src="wallet.js" type="module"></script>
 
     <style>
         body {
@@ -53,7 +54,7 @@
 
 <body>
     <h1>RAJA GAME</h1>
-    <h3>Wallet: ₹<span id="wallet">1000</span></h3>
+    <h3>Wallet: ₹<span id="wallet">Loading...</span></h3>
 
     <button class="smallBtn" onclick="addCoins()">Deposit +100</button>
     <button class="smallBtn" onclick="removeCoins()">Withdraw -100</button>
@@ -92,53 +93,27 @@
         let timer = 30;
         let gameId = "room30";
 
-        setInterval(()=>{timerTick()},1000);
+        setInterval(() => { timerTick() }, 1000);
 
-        function setMode(sec,btn){
+        function setMode(sec, btn) {
             mode = sec;
             timer = sec;
-            gameId = "room"+sec;
-            document.querySelectorAll(".smallBtn").forEach(b=>b.classList.remove("active"));
+            gameId = "room" + sec;
+            document.querySelectorAll(".smallBtn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
         }
 
-        function timerTick(){
+        function timerTick() {
             document.getElementById("timer").innerText = timer;
-            if(timer <= 0){
+            if (timer <= 0) {
                 timer = mode;
                 checkResult();
             }
             timer--;
         }
 
-        function setBet(b){ bet = b; }
+        function setBet(b) { bet = b; }
 
-        function pick(col){
+        function pick(col) {
             pickColor = col;
-            document.getElementById("pickText").innerText = col;
-        }
-
-        function addCoins(){ wallet+=100; updateWallet(); }
-        function removeCoins(){ if(wallet>=100){wallet-=100; updateWallet();}}
-
-        function updateWallet(){
-            document.getElementById("wallet").innerText = wallet;
-        }
-
-        // AUTO RESULT GENERATOR (DEMO)
-        function checkResult(){
-            const colors = ["RED","GREEN","VIOLET"];
-            const result = colors[Math.floor(Math.random()*3)];
-            
-            document.getElementById("resultText").innerText = result;
-            
-            if(result === pickColor){
-                wallet += bet;
-            } else {
-                wallet -= bet;
-            }
-            updateWallet();
-        }
-    </script>
-</body>
-</html>
+            document.getElementById("pick
