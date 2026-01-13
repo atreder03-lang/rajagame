@@ -1,0 +1,10 @@
+async function checkResult(){
+  const doc = await db.collection("rooms").doc(gameId).get();
+  if(!doc.exists){return;}
+  const result = doc.data().result || "RED";
+
+  document.getElementById("resultText").innerText = result;
+  if(result === pickColor){ wallet += bet; }
+  else { wallet -= bet; }
+  updateWallet();
+}
