@@ -1,10 +1,80 @@
-async function checkResult(){
-  const doc = await db.collection("rooms").doc(gameId).get();
-  if(!doc.exists){return;}
-  const result = doc.data().result || "RED";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN PANEL — RAJA GAME</title>
 
-  document.getElementById("resultText").innerText = result;
-  if(result === pickColor){ wallet += bet; }
-  else { wallet -= bet; }
-  updateWallet();
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+<script src="config.js"></script>
+
+<style>
+    body {
+        background:#111c2e;
+        color:white;
+        font-family: Arial;
+        margin:0;
+        padding:20px;
+        text-align:center;
+    }
+    h1 {color:#00c8ff;}
+    button{
+        padding:12px 25px;
+        margin:10px;
+        font-size:18px;
+        border:none;
+        border-radius:8px;
+        color:white;
+        cursor:pointer;
+    }
+    .red{background:red;}
+    .green{background:green;}
+    .violet{background:purple;}
+    #resultBox{
+        margin-top:30px;
+        padding:15px;
+        background:#233240;
+        border-radius:8px;
+        display:inline-block;
+    }
+</style>
+
+</head>
+<body>
+
+<h1>ADMIN PANEL</h1>
+
+<h3>Set Round Result</h3>
+
+<button class="red" onclick="setResult('RED')">RED</button>
+<button class="green" onclick="setResult('GREEN')">GREEN</button>
+<button class="violet" onclick="setResult('VIOLET')">VIOLET</button>
+
+<div id="resultBox">
+    <p>Current Result: <span id="current">--</span></p>
+</div>
+
+<script>
+const db = firebase.firestore();
+const room = "room30";
+
+async function setResult(color){
+    await db.collection("rooms").doc(room).set({
+        result: color,
+        time: Date.now()
+    });
+    document.getElementById("current").innerText = color;
+    alert("Result Updated: " + color);
 }
+
+db.collection("rooms").doc(room).onSnapshot((doc)=>{
+    if(doc.exists){
+        document.getElementById("current").innerText = doc.data().result;
+    }
+});
+</script>
+
+</body>
+</html>
