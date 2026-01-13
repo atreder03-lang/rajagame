@@ -5,12 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RAJA GAME - Demo</title>
 <style>
-body{margin:0;font-family:Arial;background:#0f172a;color:#fff;text-align:center}
-button{padding:15px;margin:5px;border:none;border-radius:8px;font-size:18px;font-weight:bold;color:#fff}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0d1b2a;
+  color:#fff;
+  text-align:center;
+}
+button{
+  padding:15px;
+  margin:5px;
+  border:none;
+  border-radius:8px;
+  font-size:18px;
+  font-weight:bold;
+  color:#fff;
+}
 .red{background:#ef4444}
 .green{background:#22c55e}
 .violet{background:#8b5cf6}
-.card{background:#111;padding:20px;margin:20px;border-radius:10px}
+.card{
+  background:#1b263b;
+  padding:20px;
+  margin:20px;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(0,0,0,.4);
+}
+h1{margin-top:25px;color:#38bdf8}
 </style>
 </head>
 <body>
@@ -27,13 +48,11 @@ button{padding:15px;margin:5px;border:none;border-radius:8px;font-size:18px;font
 
 <script>
 let t=30,b=1000,p=null;
-setInterval(()=>{if(t>0){t--;timer.innerText=t;}else{
-let r=['RED','GREEN','VIOLET'][Math.floor(Math.random()*3)];
-result.innerText=r;
-if(p===r){b+=100;}else if(p){b-=100;}
-bal.innerText=b;p=null;pick.innerText='None';t=30;}
-},1000);
-function pick(c){p=c;pick.innerText=c;}
-</script>
-</body>
-</html>
+setInterval(()=>{
+  if(t>0){
+    t--;
+    timer.innerText=t;
+  }else{
+    let r=['RED','GREEN','VIOLET'][Math.floor(Math.random()*3)];
+    result.innerText=r;
+    if(p===r){
