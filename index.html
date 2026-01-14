@@ -59,73 +59,27 @@ h1{margin-top:20px;}
 <p>Last Result: <b id="resultText">--</b></p>
 </div>
 
-<script>
+<script type="module">
+import { getWallet, updateWallet } from './wallet.js';
+
 let bet = 0;
 let pickColor = null;
 let mode = 30;
 let timer = 30;
-let gameId = "room30";
 
-setInterval(() => { timerTick() }, 1000);
-
-function setMode(sec, btn) {
-    mode = sec;
-    timer = sec;
-    gameId = "room" + sec;
-    document.querySelectorAll(".smallBtn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-}
-
-function timerTick() {
-    document.getElementById("timer").innerText = timer;
-    if (timer <= 0) {
-        timer = mode;
-        checkResult();
-    }
-    timer--;
-}
-
-function setBet(b) {
-    bet = b;
-}
-
-async function pick(col) {
-    pickColor = col;
-    document.getElementById("pickText").innerText = col;
-    await window.placeBet(bet);
-}
-
-async function checkResult() {
-    const colors = ["RED", "GREEN", "VIOLET"];
-    const result = colors[Math.floor(Math.random() * 3)];
-    document.getElementById("resultText").innerText = result;
-
-    if (result === pickColor) {
-        await window.addWin(bet * 2);
-    }
-    pickColor = null;
-    document.getElementById("pickText").innerText = "--";
-}
-
-function addCoins(){ await window.addWin(100);}
-function removeCoins(){ await window.placeBet(100);}
-</script>
-<script>
-let bet = 0;
-let pickColor = null;
-let mode = 30;
-let timer = 30;
-let gameId = "room30";
-
-setInterval(() => { timerTick() }, 1000);
+// LOAD WALLET
+getWallet().then(balance=>{
+   document.getElementById("wallet").innerText = balance;
+});
 
 function setMode(sec, btn) {
     mode = sec;
     timer = sec;
-    gameId = "room" + sec;
     document.querySelectorAll(".smallBtn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 }
+
+setInterval(() => { timerTick() }, 1000);
 
 function timerTick() {
     document.getElementById("timer").innerText = timer;
@@ -141,7 +95,9 @@ function setBet(b) { bet = b; }
 async function pick(col) {
     pickColor = col;
     document.getElementById("pickText").innerText = col;
-    await window.placeBet(bet);
+    await updateWallet(-bet);
+    let newBal = await getWallet();
+    document.getElementById("wallet").innerText = newBal;
 }
 
 async function checkResult() {
@@ -150,19 +106,25 @@ async function checkResult() {
     document.getElementById("resultText").innerText = result;
 
     if (result === pickColor) {
-        await window.addWin(bet * 2);
+        await updateWallet(bet * 2);
     }
+
     pickColor = null;
     document.getElementById("pickText").innerText = "--";
+    let newBal = await getWallet();
+    document.getElementById("wallet").innerText = newBal;
 }
 
 async function addCoins(){ 
-   await window.addWin(100);
+   await updateWallet(100);
+   document.getElementById("wallet").innerText = await getWallet();
 }
 
 async function removeCoins(){ 
-   await window.placeBet(100);
+   await updateWallet(-100);
+   document.getElementById("wallet").innerText = await getWallet();
 }
 </script>
+
 </body>
 </html>
