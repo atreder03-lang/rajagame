@@ -1,130 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAJA GAME</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAJA GAME</title>
 
-    <!-- Firebase scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-    <script src="config.js" type="module"></script>
-    <script src="wallet.js" type="module"></script>
+<!-- Firebase & JS -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+<script type="module" src="config.js"></script>
+<script type="module" src="wallet.js"></script>
 
 <style>
-body {font-family: Arial;background:#111c2e;color:white;text-align:center;margin:0;}
-h1{margin-top:20px;}
-.btn{padding:10px 18px;border-radius:6px;margin:5px;border:none;color:white;font-weight:bold;font-size:15px;}
-.green{background:#00c853;}
-.red{background:#e53935;}
-.purple{background:#8e24aa;}
-.card{width:90%;background:#162033;margin:auto;padding:15px;border-radius:8px;margin-top:15px;}
-.smallBtn{padding:6px 12px;border-radius:6px;background:#333;margin:2px;border:none;color:white;}
-.active{background:#0277bd;}
-</style>
-</head>
-
-<body>
-<h1>RAJA GAME</h1>
-<h3>Wallet: ₹<span id="wallet">Loading...</span></h3>
-
-<div>
-<button class="smallBtn" onclick="addCoins()">Deposit +100</button>
-<button class="smallBtn" onclick="removeCoins()">Withdraw -100</button>
-</div>
-
-<div style="margin-top:10px;">
-<button class="smallBtn active" onclick="setMode(30,this)">Win Go 30s</button>
-<button class="smallBtn" onclick="setMode(60,this)">Win Go 1m</button>
-<button class="smallBtn" onclick="setMode(180,this)">Win Go 3m</button>
-</div>
-
-<div class="card">
-<h2>⏳ <span id="timer">30</span>s</h2>
-
-<h3>Select Bet Amount</h3>
-<div>
-<button class="smallBtn" onclick="setBet(10)">₹10</button>
-<button class="smallBtn" onclick="setBet(20)">₹20</button>
-<button class="smallBtn" onclick="setBet(50)">₹50</button>
-<button class="smallBtn" onclick="setBet(100)">₹100</button>
-</div>
-
-<h3>Choose Colour</h3>
-<button class="btn red" onclick="pick('RED')">RED</button>
-<button class="btn green" onclick="pick('GREEN')">GREEN</button>
-<button class="btn purple" onclick="pick('VIOLET')">VIOLET</button>
-
-<p>Your Choice: <b id="pickText">--</b></p>
-<p>Last Result: <b id="resultText">--</b></p>
-</div>
-
-<script type="module">
-import { getWallet, updateWallet } from './wallet.js';
-
-let bet = 0;
-let pickColor = null;
-let mode = 30;
-let timer = 30;
-
-// LOAD WALLET
-getWallet().then(balance=>{
-   document.getElementById("wallet").innerText = balance;
-});
-
-function setMode(sec, btn) {
-    mode = sec;
-    timer = sec;
-    document.querySelectorAll(".smallBtn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+body {
+    background:#260709;
+    color:white;
+    font-family: Arial;
+    margin:0;
 }
-
-setInterval(() => { timerTick() }, 1000);
-
-function timerTick() {
-    document.getElementById("timer").innerText = timer;
-    if (timer <= 0) {
-        timer = mode;
-        checkResult();
-    }
-    timer--;
+header{
+    background:#400b0c;
+    padding:15px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    color:#f9d87d;
 }
-
-function setBet(b) { bet = b; }
-
-async function pick(col) {
-    pickColor = col;
-    document.getElementById("pickText").innerText = col;
-    await updateWallet(-bet);
-    let newBal = await getWallet();
-    document.getElementById("wallet").innerText = newBal;
+.walletBox{
+    background:#5c1416;
+    padding:15px;
+    margin:10px;
+    border-radius:8px;
 }
-
-async function checkResult() {
-    const colors = ["RED", "GREEN", "VIOLET"];
-    const result = colors[Math.floor(Math.random() * 3)];
-    document.getElementById("resultText").innerText = result;
-
-    if (result === pickColor) {
-        await updateWallet(bet * 2);
-    }
-
-    pickColor = null;
-    document.getElementById("pickText").innerText = "--";
-    let newBal = await getWallet();
-    document.getElementById("wallet").innerText = newBal;
+.btnRow{
+    display:flex;
+    justify-content:space-around;
+    margin-top:10px;
 }
-
-async function addCoins(){ 
-   await updateWallet(100);
-   document.getElementById("wallet").innerText = await getWallet();
-}
-
-async function removeCoins(){ 
-   await updateWallet(-100);
-   document.getElementById("wallet").innerText = await getWallet();
-}
-</script>
-
-</body>
-</html>
+.btn{
+    background:#b03838;
+    padding:10px 15px;
+    border-radius:5px;
+    border
