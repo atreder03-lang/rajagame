@@ -1,28 +1,20 @@
-import { getWallet, updateWallet } from "./config.js";
+import { db } from "./config.js";
+import { doc, getDoc, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-let balance = 0;
+const userId = "user"; // temp
 
-async function loadWallet() {
-  balance = await getWallet();
-  document.getElementById("wallet").innerText = balance;
+// GET USER BALANCE
+export async function getWallet() {
+  const snap = await getDoc(doc(db, "users", userId));
+  return snap.data().balance;
 }
 
-export async function placeBet(amount) {
-  if (balance < amount) {
-    alert("Not enough balance!");
-    return false;
-  }
-
-  balance -= amount;
-  await updateWallet(-amount);
-  document.getElementById("wallet").innerText = balance;
-  return true;
+// UPDATE WALLET
+export async function updateWallet(amount) {
+  const userRef = doc(db, "users", userId);
+  const snap = await getDoc(userRef);
+  const newBal = snap.data().balance + amount;
+  await updateDoc(userRef, { balance: newBal });
+  return newBal;
 }
-
-export async function addWin(amount) {
-  balance += amount;
-  await updateWallet(amount);
-  document.getElementById("wallet").innerText = balance;
-}
-
-window.onload = loadWallet;
