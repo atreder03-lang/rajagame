@@ -1,22 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin</title></head>
+<body>
+<h1>ADMIN PANEL</h1>
+<button onclick="setRes('RED')">RED</button>
+<button onclick="setRes('GREEN')">GREEN</button>
+<button onclick="setRes('VIOLET')">VIOLET</button>
+
 <script type="module">
-import { db } from "./config.js";
-import { doc, setDoc, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { db } from "./config.js"
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const room = "room30";
-
-async function setResult(color){
-    await setDoc(doc(db, "rooms", room), {
-        result: color,
-        time: Date.now()
-    });
-    document.getElementById("current").innerText = color;
-    alert("Result Updated: " + color);
+async function setRes(c){
+ await setDoc(doc(db,"rooms","room30"),{
+   result:c, time:Date.now()
+ });
+ alert("Set: "+c)
 }
-
-onSnapshot(doc(db, "rooms", room), (snap)=>{
-    if(snap.exists()){
-        document.getElementById("current").innerText = snap.data().result;
-    }
-});
 </script>
+</body>
+</html>
