@@ -5,40 +5,168 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RAJA GAME</title>
 
-<!-- Firebase & JS -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+
+<!-- Connect JS Files -->
 <script type="module" src="config.js"></script>
 <script type="module" src="wallet.js"></script>
 
 <style>
-body {
-    background:#260709;
-    color:white;
-    font-family: Arial;
-    margin:0;
+body{font-family:Arial;background:#111c2e;color:white;text-align:center;margin:0;}
+h1{margin-top:20px;}
+.btn{padding:10px 18px;border-radius:6px;margin:5px;border:none;color:white;font-weight:bold;font-size:15px;}
+.green{background:#00c853;}
+.red{background:#e53935;}
+.purple{background:#8e24aa;}
+.card{width:90%;background:#162033;margin:auto;padding:15px;border-radius:8px;margin-top:15px;}
+.smallBtn{padding:6px 12px;border-radius:6px;background:#333;margin:2px;border:none;color:white;}
+.active{background:#0277bd;}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1: GAME -->
+<div id="home">
+<h1>RAJA GAME</h1>
+<h3>Wallet: ₹<span id="wallet">Loading...</span></h3>
+
+<div>
+<button class="smallBtn" onclick="addCoins()">Deposit +100</button>
+<button class="smallBtn" onclick="removeCoins()">Withdraw -100</button>
+</div>
+
+<div style="margin-top:10px;">
+<button class="smallBtn active" onclick="setMode(30,this)">30 Sec</button>
+<button class="smallBtn" onclick="setMode(60,this)">1 Min</button>
+<button class="smallBtn" onclick="setMode(180,this)">3 Min</button>
+</div>
+
+<div class="card">
+<h2>⏳ <span id="timer">30</span>s</h2>
+
+<h3>Select Bet Amount</h3>
+<div>
+<button class="smallBtn" onclick="setBet(10)">₹10</button>
+<button class="smallBtn" onclick="setBet(20)">₹20</button>
+<button class="smallBtn" onclick="setBet(50)">₹50</button>
+<button class="smallBtn" onclick="setBet(100)">₹100</button>
+</div>
+
+<h3>Choose Colour</h3>
+<button class="btn red" onclick="pick('RED')">RED</button>
+<button class="btn green" onclick="pick('GREEN')">GREEN</button>
+<button class="btn purple" onclick="pick('VIOLET')">VIOLET</button>
+
+<p>Your Choice: <b id="pickText">--</b></p>
+<p>Last Result: <b id="resultText">--</b></p>
+</div>
+</div>
+
+<!-- PAGE 2: WALLET -->
+<div id="walletPage" style="display:none;">
+<h1>Wallet</h1>
+<h2>Balance: ₹<b id="wallet2"></b></h2>
+<button class="smallBtn" onclick="addCoins()">Deposit +100</button>
+<button class="smallBtn" onclick="removeCoins()">Withdraw -100</button>
+</div>
+
+<!-- PAGE 3: HISTORY -->
+<div id="history" style="display:none;">
+<h1>History</h1>
+<ul id="list" style="text-align:left;margin:15px;"></ul>
+</div>
+
+<!-- BOTTOM MENU -->
+<div style="
+position:fixed;bottom:0;left:0;width:100%;
+display:flex;justify-content:space-around;
+background:#1a2335;border-top:2px solid #333;padding:8px 0;">
+<button onclick="showPage('home')" style="background:none;border:none;color:white;">Home</button>
+<button onclick="showPage('walletPage')" style="background:none;border:none;color:white;">Wallet</button>
+<button onclick="showPage('history')" style="background:none;border:none;color:white;">History</button>
+</div>
+
+<script type="module">
+import { getWallet, updateWallet } from './wallet.js';
+
+let bet = 0;
+let pickColor = null;
+let mode = 30;
+let timer = 30;
+let history = [];
+
+loadWallet();
+setInterval(()=>timerTick(),1000);
+
+async function loadWallet(){
+ document.getElementById("wallet").innerText = await getWallet();
 }
-header{
-    background:#400b0c;
-    padding:15px;
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-    color:#f9d87d;
+
+function setMode(sec, btn){
+ mode = sec;
+ timer = sec;
+ document.querySelectorAll(".smallBtn").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
 }
-.walletBox{
-    background:#5c1416;
-    padding:15px;
-    margin:10px;
-    border-radius:8px;
+
+function timerTick(){
+ document.getElementById("timer").innerText = timer;
+ if(timer<=0){ timer=mode; checkResult(); }
+ timer--;
 }
-.btnRow{
-    display:flex;
-    justify-content:space-around;
-    margin-top:10px;
+
+function setBet(b){ bet=b; }
+
+async function pick(col){
+ if(bet<=0)return;
+ pickColor = col;
+ document.getElementById("pickText").innerText = col;
+ await updateWallet(-bet);
+ updateUI();
 }
-.btn{
-    background:#b03838;
-    padding:10px 15px;
-    border-radius:5px;
-    border
+
+async function checkResult(){
+ const colors = ["RED","GREEN","VIOLET"];
+ const result = colors[Math.floor(Math.random()*3)];
+ document.getElementById("resultText").innerText = result;
+
+ let win = (result===pickColor);
+ if(win) await updateWallet(bet*2);
+
+ history.push({pick:pickColor,result,win});
+ pickColor=null;
+ document.getElementById("pickText").innerText="--";
+ updateUI();
+}
+
+async function addCoins(){ await updateWallet(100); updateUI(); }
+async function removeCoins(){ await updateWallet(-100); updateUI(); }
+
+async function updateUI(){
+ let bal = await getWallet();
+ document.getElementById("wallet").innerText = bal;
+ document.getElementById("wallet2").innerText = bal;
+ let list=document.getElementById("list");
+ list.innerHTML="";
+ history.slice(-20).reverse().forEach(h=>{
+   let li=document.createElement("li");
+   li.innerHTML=`Pick:${h.pick}|Res:${h.result}|${h.win?'WIN':'LOSE'}`;
+   li.style.color=h.win?'#00ff7f':'#ff5252';
+   list.appendChild(li);
+ });
+}
+
+window.showPage=function(p){
+ document.getElementById("home").style.display="none";
+ document.getElementById("walletPage").style.display="none";
+ document.getElementById("history").style.display="none";
+ document.getElementById(p).style.display="block";
+ updateUI();
+}
+</script>
+
+</body>
+</html>
