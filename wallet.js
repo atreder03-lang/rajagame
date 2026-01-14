@@ -7,14 +7,15 @@ const userId = "user"; // temp
 // GET USER BALANCE
 export async function getWallet() {
   const snap = await getDoc(doc(db, "users", userId));
-  return snap.data().balance;
+  return snap.exists() ? snap.data().balance : 0;
 }
 
 // UPDATE WALLET
 export async function updateWallet(amount) {
   const userRef = doc(db, "users", userId);
   const snap = await getDoc(userRef);
-  const newBal = snap.data().balance + amount;
+  const current = snap.exists() ? snap.data().balance : 0;
+  const newBal = current + amount;
   await updateDoc(userRef, { balance: newBal });
   return newBal;
 }
